@@ -1,0 +1,26 @@
+# Maven
+**/target/
+!.mvn/wrapper/maven-wrapper.jar
+
+# IDEs
+.idea/
+.vscode/
+*.iml
+*.classpath
+*.project
+*.settings/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# WildFly / JBoss
+standalone/
+domain/
+deployments/
+
+# Maven local repo
+.m2/
