@@ -15,17 +15,13 @@
     <packaging>ear</packaging>
     <name>Leave Management - EAR</name>
 
-    <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-    </properties>
-
     <dependencies>
         <!-- Core EJB module -->
         <dependency>
             <groupId>com.polytech.app</groupId>
             <artifactId>core</artifactId>
             <type>jar</type>
+            <scope>compile</scope>
         </dependency>
 
         <!-- JMS module -->
@@ -33,6 +29,7 @@
             <groupId>com.polytech.app</groupId>
             <artifactId>jms</artifactId>
             <type>jar</type>
+            <scope>compile</scope>
         </dependency>
 
         <!-- SOAP module -->
@@ -40,6 +37,7 @@
             <groupId>com.polytech.app</groupId>
             <artifactId>soap</artifactId>
             <type>jar</type>
+            <scope>compile</scope>
         </dependency>
 
         <!-- Web module -->
@@ -47,6 +45,43 @@
             <groupId>com.polytech.app</groupId>
             <artifactId>web</artifactId>
             <type>war</type>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-ear-plugin</artifactId>
+                <version>3.3.0</version>
+                <configuration>
+                    <version>8</version>
+                    <defaultLibBundleDir>lib</defaultLibBundleDir>
+                    <modules>
+                        <jarModule>
+                            <groupId>com.polytech.app</groupId>
+                            <artifactId>core</artifactId>
+                            <bundleDir>/</bundleDir>
+                        </jarModule>
+                        <jarModule>
+                            <groupId>com.polytech.app</groupId>
+                            <artifactId>jms</artifactId>
+                            <bundleDir>/</bundleDir>
+                        </jarModule>
+                        <jarModule>
+                            <groupId>com.polytech.app</groupId>
+                            <artifactId>soap</artifactId>
+                            <bundleDir>/</bundleDir>
+                        </jarModule>
+                        <webModule>
+                            <groupId>com.polytech.app</groupId>
+                            <artifactId>web</artifactId>
+                            <contextRoot>/leave-management</contextRoot>
+                        </webModule>
+                    </modules>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

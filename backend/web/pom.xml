@@ -16,24 +16,18 @@
     <packaging>war</packaging>
     <name>Leave Management - Web Module</name>
 
-    <properties>
-        <jakartaee.version>10.0.0</jakartaee.version>
-    </properties>
-
     <dependencies>
-        <!-- Core module dependency -->
         <dependency>
             <groupId>com.polytech.app</groupId>
             <artifactId>core</artifactId>
-            <version>${project.version}</version>
-            <!-- Remove scope or use compile -->
+            
         </dependency>
         
         <!-- Jakarta EE Web Profile -->
         <dependency>
             <groupId>jakarta.platform</groupId>
             <artifactId>jakarta.jakartaee-web-api</artifactId>
-            <version>${jakartaee.version}</version>
+            <version>10.0.0</version>
             <scope>provided</scope>
         </dependency>
         
@@ -45,14 +39,4 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
-    
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <version>3.4.0</version>
-            </plugin>
-        </plugins>
-    </build>
 </project>
