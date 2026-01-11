@@ -1,0 +1,9 @@
+package com.polytech.app.config;
+
+import jakarta.ws.rs.ApplicationPath;
+import jakarta.ws.rs.core.Application;
+
+@ApplicationPath("/api")
+public class ApplicationConfig extends Application {
+    // empty – auto-discovers resources under /api/*
+}

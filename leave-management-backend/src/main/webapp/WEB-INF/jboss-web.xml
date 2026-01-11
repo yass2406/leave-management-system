@@ -1,0 +1,4 @@
+<jboss-web xmlns="urn:jboss:domain:jboss-web:8.0">
+    <context-root>leave-management-backend</context-root>
+    <security-domain>leaveAppDomain</security-domain>
+</jboss-web>
