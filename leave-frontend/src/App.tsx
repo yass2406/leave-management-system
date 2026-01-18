@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
-import "./App.css";
-import Dashboard from "./app/dashboard/Dashboard";
-import Login from "./app/login/Login";
-import type { User } from "./api/auth";
+import "./App.css"
+import { useEffect, useState } from "react"
+import Dashboard from "./app/dashboard/Dashboard"
+import Login from "./app/login/Login"
 import { Quantum } from 'ldrs/react'
 import 'ldrs/react/Quantum.css'
+import type { User } from "./types/types"
 
 function App() {
   const [user, setUser] = useState<User | null>(null);
@@ -47,7 +47,7 @@ function App() {
         <Quantum
           size="45"
           speed="1.75"
-          color="black"
+          color="#FFFFFF"
         />
       </div>
     );

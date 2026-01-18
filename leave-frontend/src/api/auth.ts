@@ -1,13 +1,6 @@
-const API_BASE = "http://localhost:8080/leave-management-backend/api";
+import type { User } from "@/types/types";
 
-export type User = {
-  id: string;
-  employeeCode: string;
-  firstName: string;
-  lastName: string;
-  role: "EMPLOYEE" | "MANAGER" | "HR";
-  departmentId: string | null;
-};
+const API_BASE = "http://localhost:8080/leave-management-backend/api";
 
 export async function loginAndFetchUser(
   username: string,

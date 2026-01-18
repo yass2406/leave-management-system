@@ -19,4 +19,8 @@ public class UserRepository {
                      .getResultList();
         return list.stream().findFirst();
     }
+    
+    public Optional<User> findById(String id) {
+        return Optional.ofNullable(em.find(User.class, id));
+    }
 }

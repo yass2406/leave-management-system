@@ -5,5 +5,4 @@ import jakarta.ws.rs.core.Application;
 
 @ApplicationPath("/api")
 public class ApplicationConfig extends Application {
-    // empty – auto-discovers resources under /api/*
 }

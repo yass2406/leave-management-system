@@ -13,6 +13,16 @@ Sprint 1 delivers:
 
 ***
 
+Sprint 2 delivers:
+
+- Leave domain model (types, balances, requests) persisted in MySQL
+- Employee leave request creation with balance validation and manager routing
+- REST endpoints for listing and filtering a user’s leave requests
+- Employee dashboard calendar view with leave status and type colors
+- Frontend toasts for clear API error and success feedback
+
+***
+
 ## Tech Stack
 
 Backend

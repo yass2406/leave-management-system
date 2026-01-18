@@ -5,11 +5,12 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import ManagerDashboard from "./manager/ManagerDashboard"
 import HRDashboard from "./hr/HRDashboard"
 import EmployeeDashboard from "./employee/EmployeeDashboard"
-import type { User } from "@/api/auth"
 import { Button } from "@/components/ui/button"
 import {
   IconLogout,
 } from "@tabler/icons-react"
+import MyLeaveRequestsPage from "../leave-request/MyLeaveRequestsPage.tsx"
+import type { User } from "@/types/types.ts"
 
 type DashboardProps = {
   user: User;
@@ -17,7 +18,9 @@ type DashboardProps = {
 };
 
 export default function Dashboard({ user, onLogout }: DashboardProps) {
-  const renderContent = () => {
+  const [activeSection, setActiveSection] = React.useState<"dashboard" | "my-leave-requests" | "team" | "reports">("dashboard");
+
+  const renderRoleDashboard = () => {
     switch (user.role) {
       case "EMPLOYEE":
         return <EmployeeDashboard />;
@@ -35,6 +38,21 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
     }
   };
 
+  const renderContent = () => {
+    switch (activeSection) {
+      case "dashboard":
+        return renderRoleDashboard();
+      case "my-leave-requests":
+        return <MyLeaveRequestsPage />
+      case "team":
+        return <div>Team page goes here</div>;
+      case "reports":
+        return <div>Reports page goes here</div>;
+      default:
+        return renderRoleDashboard();
+    }
+  };
+
   return (
     <SidebarProvider
       style={
@@ -44,13 +62,19 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
         } as React.CSSProperties
       }
     >
-      <AppSidebar variant="inset" />
+      <AppSidebar
+        variant="inset"
+        activeSection={activeSection}
+        onSectionChange={setActiveSection}
+      />
       <SidebarInset>
         <SiteHeader />
         <div className="p-4 flex">
           <Button className="ml-auto" variant="outline" onClick={onLogout}>
             Logout
-            <span><IconLogout className="size-5!" /></span>
+            <span>
+              <IconLogout className="size-5!" />
+            </span>
           </Button>
         </div>
         <div className="p-4">{renderContent()}</div>

@@ -1,5 +1,5 @@
 import { LoginForm } from "@/components/login-form";
-import type { User } from "@/api/auth";
+import type { User } from "@/types/types";
 
 type LoginProps = {
   onLoginSuccess: (user: User, authHeader: string) => void;

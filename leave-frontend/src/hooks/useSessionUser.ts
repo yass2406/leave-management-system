@@ -1,7 +1,7 @@
 "use client";
 
+import type { User } from "@/types/types";
 import * as React from "react";
-import type { User } from "@/api/auth";
 
 export function useSessionUser() {
   const [user, setUser] = React.useState<User | null>(null);

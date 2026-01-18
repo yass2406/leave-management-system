@@ -11,8 +11,9 @@ import {
 } from "@/components/ui/card"
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import { loginAndFetchUser, type User } from "@/api/auth"
+import { loginAndFetchUser } from "@/api/auth"
 import { helix } from "ldrs"
+import type { User } from "@/types/types"
 
 helix.register();
 
@@ -83,7 +84,7 @@ export function LoginForm({
                     <l-helix
                       size="16"
                       speed="1.2"
-                      color="white"
+                      color="#0a0a0a"
                     ></l-helix>
                   )}
                   {loading ? "Logging in..." : "Login"}

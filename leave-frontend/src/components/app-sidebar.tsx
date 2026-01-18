@@ -1,14 +1,14 @@
-"use client";
+"use client"
 
-import * as React from "react";
+import * as React from "react"
 import {
   IconListDetails,
   IconFileDescription,
+  IconDashboard,
   IconUsers,
-} from "@tabler/icons-react";
-
-import { NavMain } from "@/components/nav-main";
-import { NavUser } from "@/components/nav-user";
+} from "@tabler/icons-react"
+import { NavMain, type NavItem } from "@/components/nav-main"
+import { NavUser } from "@/components/nav-user"
 import {
   Sidebar,
   SidebarContent,
@@ -17,35 +17,51 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar";
-import { useSessionUser } from "@/hooks/useSessionUser";
+} from "@/components/ui/sidebar"
+import { useSessionUser } from "@/hooks/useSessionUser"
 
-const navMain = [
+const navMain: NavItem[] = [
   {
+    id: "dashboard",
+    title: "Dashboard",
+    icon: IconDashboard,
+  },
+  {
+    id: "my-leave-requests",
     title: "My Leave Requests",
-    url: "#",
     icon: IconListDetails,
   },
   {
+    id: "team",
     title: "Team",
-    url: "#",
     icon: IconUsers,
   },
   {
+    id: "reports",
     title: "Reports",
-    url: "#",
     icon: IconFileDescription,
   },
 ];
 
-export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
+type SectionId = "dashboard" | "my-leave-requests" | "team" | "reports";
+
+type AppSidebarProps = React.ComponentProps<typeof Sidebar> & {
+  activeSection: SectionId;
+  onSectionChange: (id: SectionId) => void;
+};
+
+export function AppSidebar({
+  activeSection,
+  onSectionChange,
+  ...props
+}: AppSidebarProps) {
   const sessionUser = useSessionUser();
 
   const navUserData = sessionUser
     ? {
         name: `${sessionUser.firstName} ${sessionUser.lastName}`,
-        role: `${sessionUser.role}`, // or real email later
-        avatar: "/avatar.png", // or a default avatar
+        role: `${sessionUser.role}`,
+        avatar: "/avatar.png",
       }
     : {
         name: "Guest",
@@ -70,7 +86,11 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={navMain} />
+        <NavMain
+          items={navMain}
+          activeSection={activeSection}
+          onSectionChange={onSectionChange}
+        />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={navUserData} />

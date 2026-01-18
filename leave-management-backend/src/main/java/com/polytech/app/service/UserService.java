@@ -18,7 +18,7 @@ public class UserService {
         if (principal == null) {
             return Optional.empty();
         }
-        String username = principal.getName(); // LDAP uid / sAMAccountName
+        String username = principal.getName();
         return userRepository.findByEmployeeCode(username);
     }
 }
