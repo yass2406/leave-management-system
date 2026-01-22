@@ -60,3 +60,60 @@ export type NavItem = {
     title: string;
     icon?: Icon;
 };
+
+export interface UserTeam {
+    id: string;
+    employeeCode: string;
+    firstName: string;
+    lastName: string;
+    role: 'EMPLOYEE' | 'MANAGER' | 'HR';
+    fullName?: string;
+}
+
+export interface LeaveBalance {
+    leaveTypeId: string;
+    leaveTypeCode: string;
+    leaveTypeName: string;
+    year: number;
+    entitledDays: number;
+    carriedOver: number;
+    takenDays: number;
+    remainingDays: number;
+}
+
+export interface TeamLeaveRequest {
+    id: string;
+    requestNumber: string;
+    employeeId: string;
+    employeeCode: string;
+    employeeName: string;
+    leaveTypeId: string;
+    leaveTypeName: string;
+    leaveTypeCode: string;
+    status: LeaveRequestStatus;
+    totalDays: number;
+    startDate: string;
+    endDate: string;
+    createdAt: string;
+}
+
+export interface HrSummary {
+    totalEmployees: number;
+    totalManagers: number;
+    totalEmployeesOnly: number;
+}
+
+export interface HrLeaveRequest {
+    id: string;
+    requestNumber: string;
+    employeeId: string;
+    employeeCode: string;
+    employeeName: string;
+    role: "EMPLOYEE" | "MANAGER" | "HR";
+    leaveTypeName: string;
+    status: LeaveRequestStatus;
+    totalDays: number;
+    startDate: string;
+    endDate: string;
+    createdAt: string;
+}

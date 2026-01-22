@@ -6,6 +6,9 @@ import java.util.List;
 
 import com.polytech.app.domain.LeaveRequest;
 import com.polytech.app.domain.LeaveType;
+import com.polytech.app.domain.Role;
+import com.polytech.app.domain.User;
+import com.polytech.app.dto.ApprovalDecisionDTO;
 import com.polytech.app.dto.LeaveRequestCreateDTO;
 import com.polytech.app.dto.LeaveRequestDTO;
 import jakarta.annotation.security.RolesAllowed;
@@ -14,6 +17,7 @@ import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.SecurityContext;
 import com.polytech.app.repository.LeaveRequestRepository;
 import com.polytech.app.repository.LeaveTypeRepository;
@@ -42,7 +46,7 @@ public class LeaveRequestResource {
 	}
 
 	@POST
-	@RolesAllowed("EMPLOYEE")
+	@RolesAllowed({ "EMPLOYEE", "MANAGER", "HR" })
 	public LeaveRequestDTO create(@Valid LeaveRequestCreateDTO dto, @Context SecurityContext securityContext) {
 
 		var principal = securityContext.getUserPrincipal();
@@ -77,15 +81,50 @@ public class LeaveRequestResource {
 
 	@GET
 	@RolesAllowed({ "EMPLOYEE", "MANAGER", "HR" })
-	public List<LeaveRequestDTO> getMyRequests(@Context SecurityContext securityContext,
-			@QueryParam("status") String status, @QueryParam("startDateFrom") String startDateFrom,
-			@QueryParam("leaveTypeId") String leaveTypeId) {
+	public List<LeaveRequestDTO> getRequests(@Context SecurityContext securityContext,
+			@QueryParam("employeeId") String employeeId, @QueryParam("status") String status,
+			@QueryParam("startDateFrom") String startDateFrom, @QueryParam("leaveTypeId") String leaveTypeId) {
 
 		var principal = securityContext.getUserPrincipal();
-		String userId = userService.getCurrentUser(principal).orElseThrow(() -> new ForbiddenException("Unknown user"))
-				.getId();
+		var currentUser = userService.getCurrentUser(principal)
+				.orElseThrow(() -> new ForbiddenException("Unknown user"));
 
-		return leaveRequestRepository.findByEmployeeId(userId, status, startDateFrom, leaveTypeId);
+		String currentUserId = currentUser.getId();
+		var currentRole = currentUser.getRole();
+
+		String effectiveEmployeeId;
+
+		// 1) No employeeId: always self-view (everyone can see their own requests)
+		if (employeeId == null || employeeId.isBlank()) {
+			effectiveEmployeeId = currentUserId;
+		} else {
+			// 2) EMPLOYEE: cannot view others
+			if (currentRole == Role.EMPLOYEE && !employeeId.equals(currentUserId)) {
+				throw new ForbiddenException("Not allowed to view other employees' leave requests");
+			}
+
+			// 3) MANAGER rules
+			if (currentRole == Role.MANAGER && !employeeId.equals(currentUserId)) {
+				// Load target user
+				var targetUser = userService.findById(employeeId)
+						.orElseThrow(() -> new NotFoundException("Target user not found"));
+
+				// Cannot view HR or another manager
+				if (targetUser.getRole() == Role.HR || targetUser.getRole() == Role.MANAGER) {
+					throw new ForbiddenException("Not allowed to view HR or manager leave requests");
+				}
+
+				// Must be a direct report
+				if (!currentUserId.equals(targetUser.getManagerId())) {
+					throw new ForbiddenException("Not allowed to view this user's leave requests");
+				}
+			}
+
+			// 4) HR can view anyone (no extra restriction)
+			effectiveEmployeeId = employeeId;
+		}
+
+		return leaveRequestRepository.findByEmployeeId(effectiveEmployeeId, status, startDateFrom, leaveTypeId);
 	}
 
 	@GET
@@ -96,4 +135,33 @@ public class LeaveRequestResource {
 				.getId();
 		return leaveRequestRepository.findByEmployeeIdAndYear(userId, year);
 	}
+
+	@POST
+	@Path("/{id}/approve")
+	@RolesAllowed({ "MANAGER", "HR" })
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response approve(@PathParam("id") String id, ApprovalDecisionDTO dto, @Context SecurityContext sc) {
+
+		var principal = sc.getUserPrincipal();
+		User approver = userService.getCurrentUser(principal).orElseThrow(() -> new ForbiddenException("Unknown user"));
+
+		leaveRequestService.approveRequest(approver, id, dto != null ? dto.comment : null);
+
+		return Response.noContent().build();
+	}
+
+	@POST
+	@Path("/{id}/reject")
+	@RolesAllowed({ "MANAGER", "HR" })
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response reject(@PathParam("id") String id, ApprovalDecisionDTO dto, @Context SecurityContext sc) {
+
+		var principal = sc.getUserPrincipal();
+		User approver = userService.getCurrentUser(principal).orElseThrow(() -> new ForbiddenException("Unknown user"));
+
+		leaveRequestService.rejectRequest(approver, id, dto != null ? dto.comment : null);
+
+		return Response.noContent().build();
+	}
+
 }

@@ -14,7 +14,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import type { LeaveRequest, LeaveType } from '@/types/types';
+import type { LeaveBalance, LeaveRequest, LeaveType } from '@/types/types';
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
@@ -22,68 +22,98 @@ export default function EmployeeDashboard() {
   const [currentYear] = useState(new Date().getFullYear());
   const [leaveRequests, setLeaveRequests] = useState<LeaveRequest[]>([]);
   const [leaveTypes, setLeaveTypes] = useState<LeaveType[]>([]);
+  const [balances, setBalances] = useState<LeaveBalance[]>([]);
   const apiBase = "http://localhost:8080/leave-management-backend/api";
+
   const loadData = async () => {
     const lmAuth = sessionStorage.getItem("lm_auth");
-    // Fetch requests for year
-    const requestsRes = await fetch(`${apiBase}/leaves/year/${currentYear}`, {
-      headers: { Authorization: lmAuth! }
-    });
-    setLeaveRequests(await requestsRes.json());
+    if (!lmAuth) return;
 
-    // Fetch leave types (for colors)
-    const typesRes = await fetch(`${apiBase}/leave-types`, {
-      headers: { Authorization: lmAuth! }
-    });
+    const [requestsRes, typesRes, balancesRes] = await Promise.all([
+      fetch(`${apiBase}/leaves/year/${currentYear}`, { headers: { Authorization: lmAuth } }),
+      fetch(`${apiBase}/leave-types`, { headers: { Authorization: lmAuth } }),
+      fetch(`${apiBase}/leave-balances/me/${currentYear}`, { headers: { Authorization: lmAuth } }),
+    ]);
+
+    setLeaveRequests(await requestsRes.json());
     setLeaveTypes(await typesRes.json());
+    setBalances(await balancesRes.json());
   };
 
   useEffect(() => {
     loadData();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentYear]);
+
+  const annualBalance = balances.find((b) => b.leaveTypeCode === "ANNUAL");
+  const sickBalance = balances.find((b) => b.leaveTypeCode === "SICK");
+
+  const nextApprovedLeave = (() => {
+    const today = new Date();
+    const approved = leaveRequests.filter(
+      (r) => r.status === "Approved" && new Date(r.startDate) >= today
+    );
+    approved.sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
+    return approved[0] ?? null;
+  })();
+
   return (
     <div className="flex flex-1 flex-col gap-2 p-4 pt-5">
+    <div className="flex flex-1 flex-col gap-2 p-4 pt-5">
       <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-        <Card className="@container/card">
-          <CardHeader>
-            <CardDescription>Leave Balance</CardDescription>
-            <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-              12 Days Remaining
-            </CardTitle>
-          </CardHeader>
-          <CardFooter className="flex-col items-start gap-1.5 text-sm">
-            <div className="text-muted-foreground">
-              This number represents your leave balance, including any days you’ve requested that are still pending approval.
-            </div>
-          </CardFooter>
-        </Card>
-        <Card className="@container/card">
-          <CardHeader>
-            <CardDescription>Leave Balance</CardDescription>
-            <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-              12 Days Remaining
-            </CardTitle>
-          </CardHeader>
-          <CardFooter className="flex-col items-start gap-1.5 text-sm">
-            <div className="text-muted-foreground">
-              This number represents your leave balance, including any days you’ve requested that are still pending approval.
-            </div>
-          </CardFooter>
-        </Card>
-        <Card className="@container/card">
-          <CardHeader>
-            <CardDescription>Leave Balance</CardDescription>
-            <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-              12 Days Remaining
-            </CardTitle>
-          </CardHeader>
-          <CardFooter className="flex-col items-start gap-1.5 text-sm">
-            <div className="text-muted-foreground">
-              This number represents your leave balance, including any days you’ve requested that are still pending approval.
-            </div>
-          </CardFooter>
-        </Card>
+          {/* Annual leave card */}
+          <Card className="@container/card">
+            <CardHeader>
+              <CardDescription>Annual leave</CardDescription>
+              <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
+                {annualBalance ? `${annualBalance.remainingDays} days remaining` : "—"}
+              </CardTitle>
+            </CardHeader>
+            <CardFooter className="flex-col items-start gap-1.5 text-sm">
+              {annualBalance && (
+                <div className="text-muted-foreground">
+                  Entitled: {annualBalance.entitledDays} • Taken: {annualBalance.takenDays}
+                </div>
+              )}
+            </CardFooter>
+          </Card>
+
+          {/* Sick leave card */}
+          <Card className="@container/card">
+            <CardHeader>
+              <CardDescription>Sick leave</CardDescription>
+              <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
+                {sickBalance ? `${sickBalance.remainingDays} days remaining` : "—"}
+              </CardTitle>
+            </CardHeader>
+            <CardFooter className="flex-col items-start gap-1.5 text-sm">
+              {sickBalance && (
+                <div className="text-muted-foreground">
+                  Entitled: {sickBalance.entitledDays} • Taken: {sickBalance.takenDays}
+                </div>
+              )}
+            </CardFooter>
+          </Card>
+
+          {/* Next approved leave card */}
+          <Card className="@container/card">
+            <CardHeader>
+              <CardDescription>Next approved leave</CardDescription>
+              <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
+                {nextApprovedLeave
+                  ? `${nextApprovedLeave.startDate} → ${nextApprovedLeave.endDate}`
+                  : "No upcoming leave"}
+              </CardTitle>
+            </CardHeader>
+            <CardFooter className="flex-col items-start gap-1.5 text-sm">
+              {nextApprovedLeave && (
+                <div className="text-muted-foreground">
+                  {nextApprovedLeave.leaveTypeName} • {nextApprovedLeave.totalDays} days
+                </div>
+              )}
+            </CardFooter>
+          </Card>
+        </div>
       </div>
       <div className="min-h-screen flex-1 md:min-h-min">
         <Calendar leaveRequests={leaveRequests} leaveTypes={leaveTypes}>

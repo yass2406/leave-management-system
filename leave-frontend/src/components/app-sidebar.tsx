@@ -7,7 +7,7 @@ import {
   IconDashboard,
   IconUsers,
 } from "@tabler/icons-react"
-import { NavMain, type NavItem } from "@/components/nav-main"
+import { NavMain } from "@/components/nav-main"
 import { NavUser } from "@/components/nav-user"
 import {
   Sidebar,
@@ -19,6 +19,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { useSessionUser } from "@/hooks/useSessionUser"
+import type { NavItem } from "@/types/types"
 
 const navMain: NavItem[] = [
   {
@@ -78,7 +79,7 @@ export function AppSidebar({
               asChild
               className="data-[slot=sidebar-menu-button]:p-1.5!"
             >
-              <a href="#">
+              <a href="/">
                 <span className="text-base font-semibold">Polytech INTL.</span>
               </a>
             </SidebarMenuButton>

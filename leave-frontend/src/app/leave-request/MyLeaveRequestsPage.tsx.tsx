@@ -154,16 +154,24 @@ export default function MyLeaveRequestsPage() {
                                     <td className="py-2">{req.endDate}</td>
                                     <td className="py-2">{req.totalDays}</td>
                                     <td className="py-2">
-                                        <Badge
-                                            variant={
-                                                req.status === "Approved" ? "default" :
-                                                    req.status === "Pending" ? "secondary" :
-                                                        req.status === "Rejected" ? "destructive" :
-                                                            req.status === "Cancelled" ? "outline" : "default"
-                                            }
-                                        >
-                                            {req.status}
-                                        </Badge>
+                                        <div className="inline-flex items-center gap-2">
+                                            <Badge
+                                                variant={
+                                                    req.status === "Approved"
+                                                        ? "default"
+                                                        : req.status === "Pending"
+                                                            ? "secondary"
+                                                            : req.status === "Rejected"
+                                                                ? "destructive"
+                                                                : req.status === "Cancelled"
+                                                                    ? "outline"
+                                                                    : "default"
+                                                }
+                                                className="inline-flex items-center gap-1"
+                                            >
+                                                {req.status}
+                                            </Badge>
+                                        </div>
                                     </td>
                                 </tr>
                             ))}

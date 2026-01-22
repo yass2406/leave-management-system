@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import com.polytech.app.domain.LeaveRequest;
 import com.polytech.app.dto.LeaveRequestDTO;
@@ -59,20 +60,42 @@ public class LeaveRequestRepository {
 
 		return query.getResultList();
 	}
-	
+
 	public List<LeaveRequestDTO> findByEmployeeIdAndYear(String employeeId, int year) {
-	    return em.createQuery("""
-	        SELECT new com.polytech.app.dto.LeaveRequestDTO(
-	            lr.id, lr.requestNumber, lr.leaveType, lr.startDate, lr.endDate, 
-	            lr.status, lr.totalDays, lr.reason
-	        ) FROM LeaveRequest lr 
-	        WHERE lr.employeeId = :empId 
-	        AND YEAR(lr.startDate) = :year 
-	        ORDER BY lr.startDate
-	        """, LeaveRequestDTO.class)
-	        .setParameter("empId", employeeId)
-	        .setParameter("year", year)
-	        .getResultList();
+		return em.createQuery("""
+				SELECT new com.polytech.app.dto.LeaveRequestDTO(
+				    lr.id, lr.requestNumber, lr.leaveType, lr.startDate, lr.endDate,
+				    lr.status, lr.totalDays, lr.reason
+				) FROM LeaveRequest lr
+				WHERE lr.employeeId = :empId
+				AND YEAR(lr.startDate) = :year
+				ORDER BY lr.startDate
+				""", LeaveRequestDTO.class).setParameter("empId", employeeId).setParameter("year", year)
+				.getResultList();
+	}
+
+	public Optional<LeaveRequest> findEntityById(String id) {
+		return Optional.ofNullable(em.find(LeaveRequest.class, id));
+	}
+
+	public LeaveRequest update(LeaveRequest request) {
+		return em.merge(request);
+	}
+
+	public List<LeaveRequest> findTeamRequestsForYear(String managerId, int year) {
+		return em
+				.createQuery(
+						"SELECT lr FROM LeaveRequest lr " + "JOIN FETCH lr.leaveType "
+								+ "JOIN User u ON u.id = lr.employeeId " + "WHERE u.managerId = :managerId "
+								+ "AND FUNCTION('YEAR', lr.startDate) = :year " + "ORDER BY lr.createdAt DESC",
+						LeaveRequest.class)
+				.setParameter("managerId", managerId).setParameter("year", year).getResultList();
+	}
+
+	public List<LeaveRequest> findAllForYear(int year) {
+		return em.createQuery("SELECT lr FROM LeaveRequest lr " + "JOIN FETCH lr.leaveType " +
+				"WHERE FUNCTION('YEAR', lr.startDate) = :year " + "ORDER BY lr.createdAt DESC", LeaveRequest.class)
+				.setParameter("year", year).getResultList();
 	}
 
 }

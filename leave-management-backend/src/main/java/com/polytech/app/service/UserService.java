@@ -11,14 +11,18 @@ import java.util.Optional;
 @ApplicationScoped
 public class UserService {
 
-    @Inject
-    private UserRepository userRepository;
+	@Inject
+	private UserRepository userRepository;
 
-    public Optional<User> getCurrentUser(Principal principal) {
-        if (principal == null) {
-            return Optional.empty();
-        }
-        String username = principal.getName();
-        return userRepository.findByEmployeeCode(username);
-    }
+	public Optional<User> getCurrentUser(Principal principal) {
+		if (principal == null) {
+			return Optional.empty();
+		}
+		String username = principal.getName();
+		return userRepository.findByEmployeeCode(username);
+	}
+
+	public Optional<User> findById(String id) {
+		return userRepository.findById(id);
+	}
 }

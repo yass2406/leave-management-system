@@ -15,8 +15,8 @@
   <name>Leave Management – Arquillian Tests</name>
 
   <properties>
-    <maven.compiler.source>17</maven.compiler.source>
-    <maven.compiler.target>17</maven.compiler.target>
+    <maven.compiler.source>21</maven.compiler.source>
+    <maven.compiler.target>21</maven.compiler.target>
 
     <!-- Versions aligned with WildFly 38.x / Jakarta EE 10 style stack -->
     <arquillian.version>1.7.0.Final</arquillian.version>

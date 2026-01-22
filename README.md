@@ -23,6 +23,52 @@ Sprint 2 delivers:
 
 ***
 
+Sprint 3 delivers:
+
+- Manager request review UI:
+  - Team page shows all direct reports and a member detail dialog with that employee’s leave requests.
+  - Manager dashboard with yearly calendar and latest team requests table (with pagination).
+
+- Approval workflow (manager + HR):
+  - Approve / reject actions on pending requests from manager and HR dashboards.
+  - Optional comments on approve/reject via confirmation dialog.
+  - Requests can be cancelled by the employee while still pending.
+
+- Backend workflow logic:
+  - `approveRequest` / `rejectRequest` service methods:
+    - Re-validate leave balance at approval time.
+    - Update `leave_requests` status, timestamps, current approver, and approval level.
+    - Adjust `leave_balances.taken_days` and derived remaining days on approval.
+  - `cancelRequest` service:
+    - Allows employees to cancel their own pending requests.
+    - Sets status to CANCELLED and clears current approver.
+
+- Audit / history:
+  - `approval_history` JPA entity and repository mapped to the MySQL `approval_history` table.
+  - History entries created for APPROVED, REJECTED, and CANCELLED actions with:
+    - Request, approver, action, level, optional comment, and timestamp.
+
+- Dashboards:
+  - Employee dashboard:
+    - Annual and sick leave cards showing entitled, taken, and remaining days from `leave_balances`.
+    - Card for the next approved leave.
+    - Year calendar view of the employee’s requests.
+    - My Leave Requests page with filters and in-row cancel action for pending requests.
+  - Manager dashboard:
+    - Same personal leave cards as employee.
+    - Extra card for “Team on leave today” (number of direct reports currently on approved leave).
+    - Year calendar for the manager’s own leave.
+    - Latest team requests table (all statuses) with role-based approve/reject in the modal.
+  - HR dashboard:
+    - Workforce overview cards:
+      - Total EMPLOYEEs.
+      - Total MANAGERs.
+      - Total users (employees + managers + HR).
+    - Global calendar of all employees’ leave.
+    - Latest leave requests table for all employees with role column (EMPLOYEE / MANAGER / HR) and status badges.
+
+***
+
 ## Tech Stack
 
 Backend

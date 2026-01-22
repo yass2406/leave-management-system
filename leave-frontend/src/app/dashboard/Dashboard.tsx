@@ -11,6 +11,7 @@ import {
 } from "@tabler/icons-react"
 import MyLeaveRequestsPage from "../leave-request/MyLeaveRequestsPage.tsx"
 import type { User } from "@/types/types.ts"
+import Team from "../team/Team.tsx"
 
 type DashboardProps = {
   user: User;
@@ -38,14 +39,14 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
     }
   };
 
-  const renderContent = () => {
+  const renderContent = () => { 
     switch (activeSection) {
       case "dashboard":
         return renderRoleDashboard();
       case "my-leave-requests":
         return <MyLeaveRequestsPage />
       case "team":
-        return <div>Team page goes here</div>;
+        return <Team />
       case "reports":
         return <div>Reports page goes here</div>;
       default:
