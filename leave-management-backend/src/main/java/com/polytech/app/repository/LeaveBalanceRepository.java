@@ -19,12 +19,12 @@ public class LeaveBalanceRepository {
 	@PersistenceContext
 	EntityManager em;
 
-	public Optional<LeaveBalance> findCurrentYear(String userId, String leaveTypeId) {
+	public Optional<LeaveBalance> findCurrentYear(String employeeId, String leaveTypeId) {
 		int year = java.time.Year.now().getValue();
 		return em
 				.createQuery("SELECT b FROM LeaveBalance b WHERE b.userId = :userId AND "
 						+ "b.leaveType.id = :leaveTypeId AND b.year = :year", LeaveBalance.class)
-				.setParameter("userId", userId).setParameter("leaveTypeId", leaveTypeId).setParameter("year", year)
+				.setParameter("userId", employeeId).setParameter("leaveTypeId", leaveTypeId).setParameter("year", year)
 				.getResultList().stream().findFirst();
 	}
 

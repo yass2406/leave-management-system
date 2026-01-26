@@ -1,6 +1,5 @@
+import { API_BASE } from "@/types/consts";
 import type { LeaveRequest, LeaveType } from "@/types/types";
-
-const API_BASE = "http://localhost:8080/leave-management-backend/api";
 
 export async function fetchLeaveTypes(): Promise<LeaveType[]> {
     const res = await fetch(`${API_BASE}/leave-types`, {

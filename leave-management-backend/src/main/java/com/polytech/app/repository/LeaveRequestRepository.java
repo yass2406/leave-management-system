@@ -28,7 +28,7 @@ public class LeaveRequestRepository {
 		return request;
 	}
 
-	public List<LeaveRequestDTO> findByEmployeeId(String employeeId, String status, String startDateFrom,
+	public List<LeaveRequestDTO> findByEmployeeId(String effectiveEmployeeId, String status, String startDateFrom,
 			String leaveTypeId) {
 		StringBuilder jpql = new StringBuilder("""
 				SELECT new com.polytech.app.dto.LeaveRequestDTO(
@@ -38,7 +38,7 @@ public class LeaveRequestRepository {
 				""");
 
 		Map<String, Object> params = new HashMap<>();
-		params.put("empId", employeeId);
+		params.put("empId", effectiveEmployeeId);
 
 		if (status != null && !status.isEmpty()) {
 			jpql.append(" AND lr.status = :status");
@@ -61,7 +61,7 @@ public class LeaveRequestRepository {
 		return query.getResultList();
 	}
 
-	public List<LeaveRequestDTO> findByEmployeeIdAndYear(String employeeId, int year) {
+	public List<LeaveRequestDTO> findByEmployeeIdAndYear(String userId, int year) {
 		return em.createQuery("""
 				SELECT new com.polytech.app.dto.LeaveRequestDTO(
 				    lr.id, lr.requestNumber, lr.leaveType, lr.startDate, lr.endDate,
@@ -70,7 +70,7 @@ public class LeaveRequestRepository {
 				WHERE lr.employeeId = :empId
 				AND YEAR(lr.startDate) = :year
 				ORDER BY lr.startDate
-				""", LeaveRequestDTO.class).setParameter("empId", employeeId).setParameter("year", year)
+				""", LeaveRequestDTO.class).setParameter("empId", userId).setParameter("year", year)
 				.getResultList();
 	}
 
@@ -86,7 +86,7 @@ public class LeaveRequestRepository {
 		return em
 				.createQuery(
 						"SELECT lr FROM LeaveRequest lr " + "JOIN FETCH lr.leaveType "
-								+ "JOIN User u ON u.id = lr.employeeId " + "WHERE u.managerId = :managerId "
+								+ "JOIN User u ON u.id = lr.employeeId " + "WHERE u.manager.id = :managerId "
 								+ "AND FUNCTION('YEAR', lr.startDate) = :year " + "ORDER BY lr.createdAt DESC",
 						LeaveRequest.class)
 				.setParameter("managerId", managerId).setParameter("year", year).getResultList();

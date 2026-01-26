@@ -1,6 +1,5 @@
+import { API_BASE } from "@/types/consts";
 import type { User } from "@/types/types";
-
-const API_BASE = "http://localhost:8080/leave-management-backend/api";
 
 export async function loginAndFetchUser(
   username: string,

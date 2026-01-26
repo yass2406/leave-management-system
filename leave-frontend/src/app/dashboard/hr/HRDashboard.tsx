@@ -29,6 +29,7 @@ import {
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import type { HrSummary, HrLeaveRequest, LeaveRequest, LeaveType } from "@/types/types";
+import { API_BASE } from "@/types/consts";
 
 export default function HRDashboard() {
     const [currentYear] = useState(new Date().getFullYear());
@@ -39,24 +40,21 @@ export default function HRDashboard() {
 
     const [page, setPage] = useState(1);
     const pageSize = 10;
-
-    const apiBase = "http://localhost:8080/leave-management-backend/api";
-
     const loadData = async () => {
         const lmAuth = sessionStorage.getItem("lm_auth");
         if (!lmAuth) return;
 
         const [sumRes, hrReqRes, calReqRes, typesRes] = await Promise.all([
-            fetch(`${apiBase}/hr-dashboard/summary`, {
+            fetch(`${API_BASE}/hr-dashboard/summary`, {
                 headers: { Authorization: lmAuth },
             }),
-            fetch(`${apiBase}/hr-dashboard/requests/${currentYear}`, {
+            fetch(`${API_BASE}/hr-dashboard/requests/${currentYear}`, {
                 headers: { Authorization: lmAuth },
             }),
-            fetch(`${apiBase}/leaves/year/${currentYear}`, {
+            fetch(`${API_BASE}/leaves/year/${currentYear}`, {
                 headers: { Authorization: lmAuth },
             }),
-            fetch(`${apiBase}/leave-types`, {
+            fetch(`${API_BASE}/leave-types`, {
                 headers: { Authorization: lmAuth },
             }),
         ]);

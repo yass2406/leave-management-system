@@ -28,14 +28,14 @@ public class UserRepository {
 
 	public List<User> findTeamForUser(User currentUser) {
 		String currentId = currentUser.getId();
-		String managerId = currentUser.getManagerId();
+		String managerId = currentUser.getManager().getId();
 		Role role = currentUser.getRole();
 
 		// HR: managers who report to this HR
 		if (role == Role.HR) {
 			return em
 					.createQuery("SELECT u FROM User u "
-							+ "WHERE u.managerId = :currentId AND u.role = :managerRole AND u.active = true "
+							+ "WHERE u.manager.id = :currentId AND u.role = :managerRole AND u.active = true "
 							+ "ORDER BY u.lastName, u.firstName", User.class)
 					.setParameter("currentId", currentId).setParameter("managerRole", Role.MANAGER).getResultList();
 		}
@@ -44,7 +44,7 @@ public class UserRepository {
 		if (role == Role.MANAGER) {
 			return em
 					.createQuery("SELECT u FROM User u "
-							+ "WHERE u.managerId = :currentId AND u.role = :employeeRole AND u.active = true "
+							+ "WHERE u.manager.id = :currentId AND u.role = :employeeRole AND u.active = true "
 							+ "ORDER BY u.lastName, u.firstName", User.class)
 					.setParameter("currentId", currentId).setParameter("employeeRole", Role.EMPLOYEE).getResultList();
 		}
@@ -53,7 +53,7 @@ public class UserRepository {
 		if (role == Role.EMPLOYEE && managerId != null) {
 			return em
 					.createQuery("SELECT u FROM User u " + "WHERE u.active = true AND (" + " u.id = :managerId "
-							+ "   OR (u.managerId = :managerId AND u.role = :employeeRole)"
+							+ "   OR (u.manager.id = :managerId AND u.role = :employeeRole)"
 							+ ") ORDER BY u.role DESC, u.lastName, u.firstName", User.class)
 					.setParameter("managerId", managerId).setParameter("employeeRole", Role.EMPLOYEE).getResultList();
 		}
@@ -70,4 +70,31 @@ public class UserRepository {
 		return em.createQuery("SELECT COUNT(u) FROM User u WHERE u.role = :role", Long.class).setParameter("role", role)
 				.getSingleResult();
 	}
+
+	public List<User> findAllWithDepartment() {
+		return em.createQuery("SELECT u FROM User u " + "LEFT JOIN FETCH u.department "
+				+ "ORDER BY u.department.name, u.lastName, u.firstName", User.class).getResultList();
+	}
+
+	public Optional<User> findByIdWithDepartment(String id) {
+		List<User> result = em
+				.createQuery("SELECT u FROM User u " + "LEFT JOIN FETCH u.department " + "WHERE u.id = :id", User.class)
+				.setParameter("id", id).getResultList();
+		return result.stream().findFirst();
+	}
+
+	public void save(User user) {
+		em.persist(user);
+	}
+
+	public User update(User user) {
+		return em.merge(user);
+	}
+
+	public int findMaxEmployeeNumber() {
+		Integer max = em.createQuery("SELECT MAX(CAST(SUBSTRING(u.employeeCode, 4) AS integer)) " + "FROM User u",
+				Integer.class).getSingleResult();
+		return max != null ? max : 0;
+	}
+
 }

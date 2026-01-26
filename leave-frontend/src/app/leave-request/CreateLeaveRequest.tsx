@@ -42,7 +42,8 @@ export default function CreateLeaveRequest({
     firstName: "",
     lastName: "",
     role: "EMPLOYEE",
-    departmentId: null
+    departmentId: null,
+    mustChangePassword: false,
   })
 
   useEffect(() => {

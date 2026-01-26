@@ -16,9 +16,9 @@ import {
     SelectValue
 } from "@/components/ui/select"
 import toast from "react-hot-toast"
+import { API_BASE } from "@/types/consts"
 
 export default function MyLeaveRequestsPage() {
-    const apiBase = "http://localhost:8080/leave-management-backend/api"
     const [showCreateForm, setShowCreateForm] = React.useState(false)
     const [requests, setRequests] = React.useState<LeaveRequest[]>([])
 
@@ -40,7 +40,7 @@ export default function MyLeaveRequestsPage() {
             if (filters.status) params.append("status", filters.status)
             if (filters.startDateFrom) params.append("startDateFrom", filters.startDateFrom)
             if (filters.leaveTypeId) params.append("leaveTypeId", filters.leaveTypeId)
-            const res = await fetch(`${apiBase}/leaves?${params}`, {
+            const res = await fetch(`${API_BASE}/leaves?${params}`, {
                 headers: {
                     "Content-Type": "application/json",
                     "Authorization": lmAuth

@@ -37,6 +37,7 @@ export function LoginForm({
       const { user, authHeader } = await loginAndFetchUser(uid, password);
       onLoginSuccess(user, authHeader);
       toast.success(`Welcome ${user.firstName} ${user.lastName}`);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       toast.error(err?.message ?? "Login failed");
     } finally {

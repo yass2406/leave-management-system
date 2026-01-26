@@ -69,6 +69,28 @@ Sprint 3 delivers:
 
 ***
 
+Sprint 4 delivers:
+
+- Leave types administration:
+  - LeaveType JPA entity and repository aligned with the leave_types table.
+  - Secured REST API under /api/leave-types for listing, creating, updating, and enabling/disabling leave types.
+  - HR Leave Policies screen in React to manage codes, names, quotas (max days/year), paid/unpaid, approval requirement, colors, and active status.
+
+- Quotas and rules:
+  - LeaveBalance entity and repository aligned with the leave_balances table.
+  - LeaveBalanceService to generate yearly balances for all active users and active leave types based on max_days_per_year.
+  - MySQL AFTER INSERT trigger on users to create initial ANNUAL and SICK balances for new users.
+  - MySQL event scheduler to automatically create missing leave_balances rows each new year so policy changes are applied to future entitlements.
+
+- User administration:
+  - User, Role, and Department entities with supporting DTOs for admin use (UserDTO, UserAdminDTO, UserAdminRequest, UserTeamDTO).
+  - UserRepository, UserService, and UserAdminService to handle user lookup, team views, and HR user CRUD.
+  - EmployeeCodeGenerator for consistent employee codes (e.g. EMP001, EMP002) and LdapProvisioningService prepared for LDAP provisioning.
+  - UserResource and UserAdminResource REST APIs so HR can list users, create new users, and edit users (name, role, department, mustChangePassword, active state).
+  - HR User Administration screen in React to manage users (table + add/edit dialogs) wired to the admin endpoints.
+
+***
+
 ## Tech Stack
 
 Backend

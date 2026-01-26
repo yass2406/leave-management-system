@@ -6,6 +6,8 @@ export type LeaveRequestStatus =
     | "Rejected"
     | "Cancelled"
 
+export type Role = "EMPLOYEE" | "MANAGER" | "HR";
+
 export type LeaveType = {
     id: string
     code: string
@@ -13,10 +15,10 @@ export type LeaveType = {
     maxDaysPerYear: number
     isPaid: boolean
     requiresApproval: boolean
-    accrualRate: number | null
     color: string
-    createdAt: string
-    updatedAt: string
+    active: boolean;
+    // createdAt: string
+    // updatedAt: string
 }
 
 export interface LeaveRequest extends NewLeaveRequest {
@@ -49,11 +51,12 @@ export type User = {
     employeeCode: string;
     firstName: string;
     lastName: string;
-    role: "EMPLOYEE" | "MANAGER" | "HR";
+    role: Role;
     departmentId: string | null;
+    mustChangePassword: boolean;
 };
 
-export type SectionId = "dashboard" | "my-leave-requests" | "team" | "reports";
+export type SectionId = "dashboard" | "my-leave-requests" | "team" | "reports" | "users" | "leave-policies";
 
 export type NavItem = {
     id: SectionId;
@@ -66,7 +69,7 @@ export interface UserTeam {
     employeeCode: string;
     firstName: string;
     lastName: string;
-    role: 'EMPLOYEE' | 'MANAGER' | 'HR';
+    role: Role;
     fullName?: string;
 }
 
@@ -109,11 +112,29 @@ export interface HrLeaveRequest {
     employeeId: string;
     employeeCode: string;
     employeeName: string;
-    role: "EMPLOYEE" | "MANAGER" | "HR";
+    role: Role;
     leaveTypeName: string;
     status: LeaveRequestStatus;
     totalDays: number;
     startDate: string;
     endDate: string;
     createdAt: string;
+}
+
+
+export interface DepartmentDTO {
+    id: string;
+    name: string;
+}
+
+export interface UserAdminDTO {
+    id: string;
+    employeeCode: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    role: Role;    
+    departmentId: string;
+    departmentName: string;
+    active: boolean;
 }

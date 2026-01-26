@@ -9,4 +9,5 @@ public class UserDTO {
     public String lastName;
     public Role role;
     public String departmentId;
+	public boolean mustChangePassword;
 }

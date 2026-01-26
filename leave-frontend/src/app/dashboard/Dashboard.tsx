@@ -12,6 +12,8 @@ import {
 import MyLeaveRequestsPage from "../leave-request/MyLeaveRequestsPage.tsx"
 import type { User } from "@/types/types.ts"
 import Team from "../team/Team.tsx"
+import Users from "../users/Users.tsx"
+import { LeavePolicies } from "../leave-policies/LeavePolicies.tsx"
 
 type DashboardProps = {
   user: User;
@@ -19,7 +21,7 @@ type DashboardProps = {
 };
 
 export default function Dashboard({ user, onLogout }: DashboardProps) {
-  const [activeSection, setActiveSection] = React.useState<"dashboard" | "my-leave-requests" | "team" | "reports">("dashboard");
+  const [activeSection, setActiveSection] = React.useState<"dashboard" | "my-leave-requests" | "team" | "reports" | "users" | "leave-policies">("dashboard");
 
   const renderRoleDashboard = () => {
     switch (user.role) {
@@ -49,6 +51,10 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
         return <Team />
       case "reports":
         return <div>Reports page goes here</div>;
+      case "users":
+        return <Users />
+      case "leave-policies":
+        return <LeavePolicies />
       default:
         return renderRoleDashboard();
     }

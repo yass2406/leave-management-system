@@ -6,6 +6,7 @@ import {
   IconFileDescription,
   IconDashboard,
   IconUsers,
+  IconSettings,
 } from "@tabler/icons-react"
 import { NavMain } from "@/components/nav-main"
 import { NavUser } from "@/components/nav-user"
@@ -19,9 +20,9 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { useSessionUser } from "@/hooks/useSessionUser"
-import type { NavItem } from "@/types/types"
+import type { NavItem, SectionId } from "@/types/types"
 
-const navMain: NavItem[] = [
+const baseNav: NavItem[] = [
   {
     id: "dashboard",
     title: "Dashboard",
@@ -36,15 +37,14 @@ const navMain: NavItem[] = [
     id: "team",
     title: "Team",
     icon: IconUsers,
-  },
-  {
-    id: "reports",
-    title: "Reports",
-    icon: IconFileDescription,
-  },
+  }
 ];
 
-type SectionId = "dashboard" | "my-leave-requests" | "team" | "reports";
+const hrExtra: NavItem[] = [
+  { id: "reports", title: "Reports", icon: IconFileDescription },
+  { id: "users", title: "Users", icon: IconUsers },
+  { id: "leave-policies", title: "Leave Policies", icon: IconSettings },
+];
 
 type AppSidebarProps = React.ComponentProps<typeof Sidebar> & {
   activeSection: SectionId;
@@ -60,15 +60,22 @@ export function AppSidebar({
 
   const navUserData = sessionUser
     ? {
-        name: `${sessionUser.firstName} ${sessionUser.lastName}`,
-        role: `${sessionUser.role}`,
-        avatar: "/avatar.png",
-      }
+      name: `${sessionUser.firstName} ${sessionUser.lastName}`,
+      role: `${sessionUser.role}`,
+      avatar: "/avatar.png",
+    }
     : {
-        name: "Guest",
-        role: "",
-        avatar: "/avatar.png",
-      };
+      name: "Guest",
+      role: "",
+      avatar: "/avatar.png",
+    };
+
+  const role = sessionUser?.role;
+  let navItems: NavItem[] = baseNav;
+
+  if (role === "HR") {
+    navItems = [...baseNav, ...hrExtra];
+  }
 
   return (
     <Sidebar collapsible="offcanvas" {...props}>
@@ -88,7 +95,7 @@ export function AppSidebar({
       </SidebarHeader>
       <SidebarContent>
         <NavMain
-          items={navMain}
+          items={navItems}
           activeSection={activeSection}
           onSectionChange={onSectionChange}
         />

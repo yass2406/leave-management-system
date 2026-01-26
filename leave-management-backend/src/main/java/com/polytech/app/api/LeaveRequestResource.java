@@ -95,7 +95,7 @@ public class LeaveRequestResource {
 		String effectiveEmployeeId;
 
 		// 1) No employeeId: always self-view (everyone can see their own requests)
-		if (employeeId == null || employeeId.isBlank()) {
+		if (employeeId == null) {
 			effectiveEmployeeId = currentUserId;
 		} else {
 			// 2) EMPLOYEE: cannot view others
@@ -115,7 +115,7 @@ public class LeaveRequestResource {
 				}
 
 				// Must be a direct report
-				if (!currentUserId.equals(targetUser.getManagerId())) {
+				if (!currentUserId.equals(targetUser.getManager().getId())) {
 					throw new ForbiddenException("Not allowed to view this user's leave requests");
 				}
 			}

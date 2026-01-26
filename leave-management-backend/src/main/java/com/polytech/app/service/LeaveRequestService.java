@@ -62,8 +62,8 @@ public class LeaveRequestService {
 		throw new IllegalStateException("Could not generate unique request number after 10 attempts");
 	}
 
-	public void validateBalance(String userId, LeaveType leaveType, BigDecimal totalDays) {
-		LeaveBalance balance = leaveBalanceRepository.findCurrentYear(userId, leaveType.getId())
+	public void validateBalance(String employeeId, LeaveType leaveType, BigDecimal totalDays) {
+		LeaveBalance balance = leaveBalanceRepository.findCurrentYear(employeeId, leaveType.getId())
 				.orElseThrow(() -> new BadRequestException("No balance for this leave type"));
 
 		if (balance.getRemainingDays().compareTo(totalDays) < 0) {
@@ -77,11 +77,12 @@ public class LeaveRequestService {
 		User employee = userRepository.findById(employeeId)
 				.orElseThrow(() -> new NotFoundException("Employee not found"));
 
-		if (employee.getManagerId() == null) {
-			throw new BadRequestException("No manager assigned to employee");
-		}
+		User manager = employee.getManager();
+	    if (manager == null) {
+	        throw new BadRequestException("No manager assigned to employee");
+	    }
 
-		request.setCurrentApproverId(employee.getManagerId());
+	    request.setCurrentApproverId(manager.getId());
 		request.setRequestNumber(generateRequestNumber());
 
 		em.persist(request);
@@ -101,7 +102,7 @@ public class LeaveRequestService {
 				.orElseThrow(() -> new NotFoundException("Employee not found"));
 
 		// Manager can only approve direct reports; HR can approve all
-		if (approver.getRole() == Role.MANAGER && !approver.getId().equals(employee.getManagerId())) {
+		if (approver.getRole() == Role.MANAGER && !approver.getId().equals(employee.getManager().getId())) {
 			throw new ForbiddenException("Not allowed to approve this user's leave request");
 		}
 
@@ -147,7 +148,7 @@ public class LeaveRequestService {
 		User employee = userRepository.findById(request.getEmployeeId())
 				.orElseThrow(() -> new NotFoundException("Employee not found"));
 
-		if (approver.getRole() == Role.MANAGER && !approver.getId().equals(employee.getManagerId())) {
+		if (approver.getRole() == Role.MANAGER && !approver.getId().equals(employee.getManager().getId())) {
 			throw new ForbiddenException("Not allowed to reject this user's leave request");
 		}
 

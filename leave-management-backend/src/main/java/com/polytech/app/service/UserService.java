@@ -19,10 +19,19 @@ public class UserService {
 			return Optional.empty();
 		}
 		String username = principal.getName();
-		return userRepository.findByEmployeeCode(username);
+		return userRepository.findByEmployeeCode(username).filter(u -> Boolean.TRUE.equals(u.getActive()));
 	}
 
-	public Optional<User> findById(String id) {
-		return userRepository.findById(id);
+	public Optional<User> findById(String employeeId) {
+		return userRepository.findById(employeeId);
 	}
+
+	public void save(User user) {
+		if (user.getId() == null) {
+			userRepository.save(user);
+		} else {
+			userRepository.update(user);
+		}
+	}
+
 }

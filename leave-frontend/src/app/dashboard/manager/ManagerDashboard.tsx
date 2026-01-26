@@ -33,6 +33,7 @@ import {
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import type { LeaveBalance, LeaveRequest, LeaveType, TeamLeaveRequest } from '@/types/types'
+import { API_BASE } from '@/types/consts'
 
 export default function ManagerDashboard() {
     const [currentYear] = useState(new Date().getFullYear());
@@ -43,21 +44,20 @@ export default function ManagerDashboard() {
     const [teamSize, setTeamSize] = useState(0);
     const [page, setPage] = useState(1);
     const pageSize = 10;
-    const apiBase = "http://localhost:8080/leave-management-backend/api";
     const loadData = async () => {
         const lmAuth = sessionStorage.getItem("lm_auth");
         if (!lmAuth) return;
         const [requestsRes, typesRes, balancesRes, teamRes] = await Promise.all([
-            fetch(`${apiBase}/leaves/year/${currentYear}`, {
+            fetch(`${API_BASE}/leaves/year/${currentYear}`, {
                 headers: { Authorization: lmAuth },
             }),
-            fetch(`${apiBase}/leave-types`, {
+            fetch(`${API_BASE}/leave-types`, {
                 headers: { Authorization: lmAuth },
             }),
-            fetch(`${apiBase}/leave-balances/me/${currentYear}`, {
+            fetch(`${API_BASE}/leave-balances/me/${currentYear}`, {
                 headers: { Authorization: lmAuth },
             }),
-            fetch(`${apiBase}/leaves/team/year/${currentYear}`, {
+            fetch(`${API_BASE}/leaves/team/year/${currentYear}`, {
                 headers: { Authorization: lmAuth },
             }),
         ]);

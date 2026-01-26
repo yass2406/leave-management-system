@@ -14,6 +14,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import { API_BASE } from '@/types/consts';
 import type { LeaveBalance, LeaveRequest, LeaveType } from '@/types/types';
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useEffect, useState } from 'react'
@@ -23,16 +24,15 @@ export default function EmployeeDashboard() {
   const [leaveRequests, setLeaveRequests] = useState<LeaveRequest[]>([]);
   const [leaveTypes, setLeaveTypes] = useState<LeaveType[]>([]);
   const [balances, setBalances] = useState<LeaveBalance[]>([]);
-  const apiBase = "http://localhost:8080/leave-management-backend/api";
 
   const loadData = async () => {
     const lmAuth = sessionStorage.getItem("lm_auth");
     if (!lmAuth) return;
 
     const [requestsRes, typesRes, balancesRes] = await Promise.all([
-      fetch(`${apiBase}/leaves/year/${currentYear}`, { headers: { Authorization: lmAuth } }),
-      fetch(`${apiBase}/leave-types`, { headers: { Authorization: lmAuth } }),
-      fetch(`${apiBase}/leave-balances/me/${currentYear}`, { headers: { Authorization: lmAuth } }),
+      fetch(`${API_BASE}/leaves/year/${currentYear}`, { headers: { Authorization: lmAuth } }),
+      fetch(`${API_BASE}/leave-types`, { headers: { Authorization: lmAuth } }),
+      fetch(`${API_BASE}/leave-balances/me/${currentYear}`, { headers: { Authorization: lmAuth } }),
     ]);
 
     setLeaveRequests(await requestsRes.json());

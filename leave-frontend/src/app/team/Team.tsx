@@ -23,11 +23,11 @@ import {
     IconCircleXFilled,
     IconClockHour4,
 } from "@tabler/icons-react"
+import { API_BASE } from "@/types/consts"
 
 type ApprovalAction = "approve" | "reject";
 
 export default function Team() {
-    const apiBase = "http://localhost:8080/leave-management-backend/api";
     const [team, setTeam] = useState<UserTeam[]>([]);
     const [loading, setLoading] = useState(true);
     const [pendingAction, setPendingAction] = useState<{
@@ -57,7 +57,7 @@ export default function Team() {
             return;
         }
         setRequestsLoading(true);
-        fetch(`${apiBase}/leaves?employeeId=${employeeId}`, {
+        fetch(`${API_BASE}/leaves?employeeId=${employeeId}`, {
             headers: { Authorization: authToken },
         })
             .then(async (res) => {
@@ -80,7 +80,7 @@ export default function Team() {
 
     const handleApprove = (requestId: string, comment: string) => {
         if (!authToken) return;
-        fetch(`${apiBase}/leaves/${requestId}/approve`, {
+        fetch(`${API_BASE}/leaves/${requestId}/approve`, {
             method: "POST",
             headers: {
                 Authorization: authToken,
@@ -103,7 +103,7 @@ export default function Team() {
 
     const handleReject = (requestId: string, comment: string) => {
         if (!authToken) return;
-        fetch(`${apiBase}/leaves/${requestId}/reject`, {
+        fetch(`${API_BASE}/leaves/${requestId}/reject`, {
             method: "POST",
             headers: {
                 Authorization: authToken,
@@ -132,7 +132,7 @@ export default function Team() {
             return;
         }
 
-        fetch(`${apiBase}/users/team`, {
+        fetch(`${API_BASE}/users/team`, {
             headers: { Authorization: authToken },
         })
             .then(async (res) => {
