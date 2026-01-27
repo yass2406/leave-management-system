@@ -14,6 +14,7 @@ import type { User } from "@/types/types.ts"
 import Team from "../team/Team.tsx"
 import Users from "../users/Users.tsx"
 import { LeavePolicies } from "../leave-policies/LeavePolicies.tsx"
+import { Reports } from "../reports/Reports.tsx"
 
 type DashboardProps = {
   user: User;
@@ -50,7 +51,7 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
       case "team":
         return <Team />
       case "reports":
-        return <div>Reports page goes here</div>;
+        return <Reports />
       case "users":
         return <Users />
       case "leave-policies":

@@ -17,8 +17,6 @@ export type LeaveType = {
     requiresApproval: boolean
     color: string
     active: boolean;
-    // createdAt: string
-    // updatedAt: string
 }
 
 export interface LeaveRequest extends NewLeaveRequest {
@@ -133,8 +131,37 @@ export interface UserAdminDTO {
     firstName: string;
     lastName: string;
     email: string;
-    role: Role;    
+    role: Role;
     departmentId: string;
     departmentName: string;
     active: boolean;
 }
+
+export type DepartmentLeaveUtilization = {
+    departmentId: string | null;
+    departmentCode: string | null;
+    departmentName: string | null;
+    headcount: number;
+    totalApprovedLeaveDays: number;
+    averageLeaveDaysPerEmployee: number;
+    utilizationRate: number;
+};
+
+export type MonthlyLeaveStats = {
+    month: number;
+    totalLeaveDays: number;
+};
+
+export type LeaveTypeDistribution = {
+    leaveTypeCode: string;
+    leaveTypeName: string;
+    totalLeaveDays: number;
+};
+
+export type EmployeeLeaveUsage = {
+    employeeId: string;
+    employeeCode: string;
+    fullName: string;
+    departmentCode: string | null;
+    totalLeaveDays: number;
+};

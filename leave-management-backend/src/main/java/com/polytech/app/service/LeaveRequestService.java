@@ -98,7 +98,7 @@ public class LeaveRequestService {
 			throw new BadRequestException("Only pending requests can be approved");
 		}
 
-		User employee = userRepository.findById(request.getEmployeeId())
+		User employee = userRepository.findById(request.getEmployee().getId())
 				.orElseThrow(() -> new NotFoundException("Employee not found"));
 
 		// Manager can only approve direct reports; HR can approve all
@@ -145,7 +145,7 @@ public class LeaveRequestService {
 			throw new BadRequestException("Only pending requests can be rejected");
 		}
 
-		User employee = userRepository.findById(request.getEmployeeId())
+		User employee = userRepository.findById(request.getEmployee().getId())
 				.orElseThrow(() -> new NotFoundException("Employee not found"));
 
 		if (approver.getRole() == Role.MANAGER && !approver.getId().equals(employee.getManager().getId())) {

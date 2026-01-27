@@ -2,7 +2,6 @@ package com.polytech.app.api;
 
 import java.util.List;
 
-import com.polytech.app.domain.LeaveRequest;
 import com.polytech.app.dto.TeamLeaveRequestDTO;
 import com.polytech.app.dto.TeamLeaveSummaryDTO;
 import com.polytech.app.repository.LeaveRequestRepository;
@@ -41,8 +40,8 @@ public class TeamLeaveResource {
 		var list = leaveRequestRepo.findTeamRequestsForYear(manager.getId(), year);
 
 		List<TeamLeaveRequestDTO> dtos = list.stream().map(lr -> {
-			var employee = userRepository.findById(lr.getEmployeeId())
-					.orElseThrow(() -> new NotFoundException("Employee not found: " + lr.getEmployeeId()));
+			var employee = userRepository.findById(lr.getEmployee().getId())
+					.orElseThrow(() -> new NotFoundException("Employee not found: " + lr.getEmployee().getId()));
 
 			String employeeName = employee.getFirstName() + " " + employee.getLastName();
 
@@ -52,7 +51,7 @@ public class TeamLeaveResource {
 					lr.getEndDate(), lr.getCreatedAt());
 		}).toList();
 
-		int teamSize = (int) list.stream().map(LeaveRequest::getEmployeeId).distinct().count();
+		int teamSize = (int) list.stream().map(lr -> lr.getEmployee().getId()).distinct().count();
 
 		return new TeamLeaveSummaryDTO(teamSize, dtos);
 	}

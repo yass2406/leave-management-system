@@ -27,6 +27,9 @@ import {
 } from "@/components/ui/table";
 import type { LeaveType } from "@/types/types";
 import { API_BASE } from "@/types/consts";
+import { helix } from "ldrs";
+
+helix.register();
 
 export function LeavePolicies() {
     const [leaveTypes, setLeaveTypes] = React.useState<LeaveType[]>([]);
@@ -52,7 +55,7 @@ export function LeavePolicies() {
             }
             const data = (await res.json()) as LeaveType[];
             setLeaveTypes(data);
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (err: any) {
             toast.error(err?.message ?? "Failed to load leave types");
         } finally {
@@ -90,7 +93,7 @@ export function LeavePolicies() {
             setDialogOpen(false);
             setEditing(null);
             fetchLeaveTypes();
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (err: any) {
             toast.error(err?.message ?? "Save failed");
         }
@@ -113,11 +116,19 @@ export function LeavePolicies() {
             }
             toast.success("Status updated");
             fetchLeaveTypes();
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (err: any) {
             toast.error(err?.message ?? "Failed to update status");
         }
     };
+
+    if (loading) {
+        return (
+            <div className="flex h-72 w-full items-center justify-center">
+                <l-helix size="16" speed="1.2" color="#0a0a0a"></l-helix>
+            </div>
+        );
+    }
 
     return (
         <Card>

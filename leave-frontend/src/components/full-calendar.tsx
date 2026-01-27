@@ -16,6 +16,9 @@ import {
   startOfWeek,
   subMonths,
   subYears,
+  isWithinInterval,
+  startOfDay,
+  endOfDay
 } from 'date-fns'
 import { enUS } from 'date-fns/locale/en-US'
 import {
@@ -96,6 +99,7 @@ const Calendar = ({
   )
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useCalendar = () => useContext(Context)
 
 const CalendarViewTrigger = forwardRef<
@@ -139,13 +143,13 @@ const CalendarYearView = () => {
   if (view !== 'year') return null
 
   const getLeaveStatusForDate = (d: Date): LeaveStatus => {
-    const req = leaveRequests.find(r => {
-      const start = new Date(r.startDate)
-      const end = new Date(r.endDate)
-      return isSameDay(start, d) || isSameDay(end, d)
-    })
+    const req = leaveRequests.find((r) => {
+      const start = startOfDay(new Date(r.startDate));
+      const end = endOfDay(new Date(r.endDate));
+      return isWithinInterval(d, { start, end });
+    });
     if (!req) return null
-    const s = req.status.toLowerCase()
+    const s = req.status.toLowerCase();
     if (s === 'pending' || s === 'approved' || s === 'rejected') {
       return s as LeaveStatus
     }
@@ -153,13 +157,15 @@ const CalendarYearView = () => {
   }
 
   const getLeaveTypeColorForDate = (d: Date): string | null => {
-    const req = leaveRequests.find(r =>
-      isSameDay(new Date(r.startDate), d),
-    )
+    const req = leaveRequests.find((r) => {
+      const start = startOfDay(new Date(r.startDate));
+      const end = endOfDay(new Date(r.endDate));
+      return isWithinInterval(d, { start, end });
+    });
     if (!req) return null
 
-    const type = leaveTypes.find(t => t.id === req.leaveTypeId)
-    if (type?.color) return type.color
+    const type = leaveTypes.find((t) => t.id === req.leaveTypeId);
+    if (type?.color) return type.color;
 
     // Fallback based on code if color missing
     if (req.leaveTypeCode === 'ANNUAL') return '#27AE60'

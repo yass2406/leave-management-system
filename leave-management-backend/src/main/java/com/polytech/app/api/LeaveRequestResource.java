@@ -50,21 +50,21 @@ public class LeaveRequestResource {
 	public LeaveRequestDTO create(@Valid LeaveRequestCreateDTO dto, @Context SecurityContext securityContext) {
 
 		var principal = securityContext.getUserPrincipal();
-		String employeeId = userService.getCurrentUser(principal)
-				.orElseThrow(() -> new ForbiddenException("Unknown user")).getId();
+		User currentUser = userService.getCurrentUser(principal)
+		        .orElseThrow(() -> new ForbiddenException("Unknown user"));
 
 		LeaveType leaveType = leaveTypeRepository.findById(dto.leaveTypeId)
 				.orElseThrow(() -> new NotFoundException("Leave type not found"));
 
 		LeaveRequest request = new LeaveRequest();
-		request.setEmployeeId(employeeId);
+		request.setEmployee(currentUser);
 		request.setLeaveType(leaveType);
 		request.setStartDate(dto.startDate);
 		request.setEndDate(dto.endDate);
 		request.setReason(dto.reason);
 		request.setTotalDays(calculateDays(dto.startDate, dto.endDate));
 
-		request = leaveRequestService.createWithManager(employeeId, request);
+		request = leaveRequestService.createWithManager(currentUser.getId(), request);
 
 		LeaveRequestDTO responseDto = new LeaveRequestDTO();
 		responseDto.id = request.getId();

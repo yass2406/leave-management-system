@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE jasperReport PUBLIC "-//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+
+<jasperReport name="leave_utilization"
+    pageWidth="595" pageHeight="842"
+    columnWidth="515"
+    leftMargin="40" rightMargin="40"
+    topMargin="40" bottomMargin="40"
+    whenNoDataType="AllSectionsNoDetail">
+
+    <!-- Subdataset: monthly stats -->
+    <subDataset name="monthlyDataset">
+        <field name="month" class="java.lang.Integer" />
+        <field name="totalLeaveDays" class="java.lang.Double" />
+    </subDataset>
+
+    <!-- Subdataset: type distribution -->
+    <subDataset name="typeDataset">
+        <field name="leaveTypeCode" class="java.lang.String" />
+        <field name="leaveTypeName" class="java.lang.String" />
+        <field name="totalLeaveDays" class="java.lang.Double" />
+    </subDataset>
+
+    <!-- Subdataset: top employees -->
+    <subDataset name="topEmpDataset">
+        <field name="employeeCode" class="java.lang.String" />
+        <field name="fullName" class="java.lang.String" />
+        <field name="departmentCode" class="java.lang.String" />
+        <field name="totalLeaveDays" class="java.lang.Double" />
+    </subDataset>
+
+    <!-- Parameters -->
+    <parameter name="REPORT_YEAR" class="java.lang.Integer" />
+    <parameter name="MONTHLY_DS" class="net.sf.jasperreports.engine.JRDataSource" />
+    <parameter name="TYPE_DS" class="net.sf.jasperreports.engine.JRDataSource" />
+    <parameter name="TOP_EMP_DS" class="net.sf.jasperreports.engine.JRDataSource" />
+
+    <!-- Main fields: DepartmentLeaveUtilizationDTO -->
+    <field name="departmentName" class="java.lang.String" />
+    <field name="departmentCode" class="java.lang.String" />
+    <field name="headcount" class="java.lang.Long" />
+    <field name="totalApprovedLeaveDays" class="java.lang.Double" />
+    <field name="averageLeaveDaysPerEmployee" class="java.lang.Double" />
+    <field name="utilizationRate" class="java.lang.Double" />
+
+    <!-- Title -->
+    <title>
+        <band height="40">
+            <textField>
+                <reportElement x="0" y="0" width="515" height="20" />
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="14" isBold="true" />
+                </textElement>
+                <textFieldExpression><![CDATA["Leave Utilization Report - " + $P{REPORT_YEAR}]]></textFieldExpression>
+            </textField>
+
+            <textField>
+                <reportElement x="0" y="22" width="515" height="16" />
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="10" />
+                </textElement>
+                <textFieldExpression><![CDATA["Generated on: " + java.time.LocalDate.now().toString()]]></textFieldExpression>
+            </textField>
+        </band>
+    </title>
+
+    <!-- Column header (departments) -->
+    <columnHeader>
+        <band height="18">
+            <staticText>
+                <reportElement x="0" y="0" width="200" height="18" />
+                <textElement>
+                    <font isBold="true" />
+                </textElement>
+                <text><![CDATA[Department]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="200" y="0" width="60" height="18" />
+                <textElement textAlignment="Right">
+                    <font isBold="true" />
+                </textElement>
+                <text><![CDATA[Headcount]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="260" y="0" width="80" height="18" />
+                <textElement textAlignment="Right">
+                    <font isBold="true" />
+                </textElement>
+                <text><![CDATA[Total days]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="340" y="0" width="80" height="18" />
+                <textElement textAlignment="Right">
+                    <font isBold="true" />
+                </textElement>
+                <text><![CDATA[Avg / emp]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="420" y="0" width="95" height="18" />
+                <textElement textAlignment="Right">
+                    <font isBold="true" />
+                </textElement>
+                <text><![CDATA[Utilization %]]></text>
+            </staticText>
+        </band>
+    </columnHeader>
+
+    <!-- Department detail rows -->
+    <detail>
+        <band height="16">
+            <textField>
+                <reportElement x="0" y="0" width="200" height="16" />
+                <textElement />
+                <textFieldExpression><![CDATA[$F{departmentCode} != null ?$F{departmentCode} + " - " + $F{departmentName} :$F{departmentName}]]></textFieldExpression>
+            </textField>
+
+            <textField>
+                <reportElement x="200" y="0" width="60" height="16" />
+                <textElement textAlignment="Right" />
+                <textFieldExpression><![CDATA[$F{headcount} == null ? "" : $F{headcount}.toString()]]></textFieldExpression>
+            </textField>
+
+            <textField>
+                <reportElement x="260" y="0" width="80" height="16" />
+                <textElement textAlignment="Right" />
+                <textFieldExpression><![CDATA[String.format("%.2f", $F{totalApprovedLeaveDays})]]></textFieldExpression>
+            </textField>
+
+            <textField>
+                <reportElement x="340" y="0" width="80" height="16" />
+                <textElement textAlignment="Right" />
+                <textFieldExpression><![CDATA[String.format("%.2f", $F{averageLeaveDaysPerEmployee})]]></textFieldExpression>
+            </textField>
+
+            <textField>
+                <reportElement x="420" y="0" width="95" height="16" />
+                <textElement textAlignment="Right" />
+                <textFieldExpression><![CDATA[String.format("%.2f", $F{utilizationRate})]]></textFieldExpression>
+            </textField>
+        </band>
+    </detail>
+    <summary>
+        <band height="360">
+
+            <!-- Monthly totals -->
+            <staticText>
+                <reportElement x="0" y="0" width="515" height="18" />
+                <textElement>
+                    <font isBold="true" />
+                </textElement>
+                <text><![CDATA[Monthly leave totals]]></text>
+            </staticText>
+        </band>
+    </summary>
+
+</jasperReport>

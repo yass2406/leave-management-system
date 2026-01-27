@@ -11,7 +11,7 @@ Sprint 1 delivers:
 - Secured REST endpoint /api/auth/me
 - React login and basic role-based dashboard (EMPLOYEE / MANAGER / HR)
 
-***
+---
 
 Sprint 2 delivers:
 
@@ -21,7 +21,7 @@ Sprint 2 delivers:
 - Employee dashboard calendar view with leave status and type colors
 - Frontend toasts for clear API error and success feedback
 
-***
+---
 
 Sprint 3 delivers:
 
@@ -67,7 +67,7 @@ Sprint 3 delivers:
     - Global calendar of all employees’ leave.
     - Latest leave requests table for all employees with role column (EMPLOYEE / MANAGER / HR) and status badges.
 
-***
+---
 
 Sprint 4 delivers:
 
@@ -89,7 +89,33 @@ Sprint 4 delivers:
   - UserResource and UserAdminResource REST APIs so HR can list users, create new users, and edit users (name, role, department, mustChangePassword, active state).
   - HR User Administration screen in React to manage users (table + add/edit dialogs) wired to the admin endpoints.
 
-***
+---
+
+Sprint 5 delivers:
+
+- Decision-support reporting for HR and management through consolidated dashboards and PDFs.
+- Backend reporting APIs under `/api/hr-dashboard/leave-utilization` providing:
+  - Department-level utilization (headcount, total leave days, average days per employee, utilization rate).
+  - Monthly leave usage statistics for the selected year.
+  - Leave days distribution by leave type (annual, sick, etc.).
+  - Top employees by total approved leave days.
+- React-based HR reporting screens:
+  - Department utilization bar chart (utilization % vs. average leave days per employee).
+  - Monthly leave trend area chart (12-month view).
+  - Leave type distribution bar chart.
+  - “Top leave users” table listing the top 10 employees by taken days.
+  - Department leave summary table aligned with the backend utilization API.
+- Leave utilization PDF export:
+  - `/hr-dashboard/leave-utilization/pdf?year=YYYY` endpoint to generate a printable report.
+  - PDF includes department utilization details and aggregated yearly metrics to support HR decision making.
+- UX improvements and performance optimizations:
+  - Loading states and spinners on reporting screens to avoid flicker and improve perceived performance.
+  - Minor layout refinements and consistent styling across HR dashboards and report views.
+  - Query and indexing adjustments on leave-related tables to keep reporting endpoints responsive for organizational-scale data.
+
+With Sprint 5 (Decision support – Reporting & Optimization) completed, the system is ready for organizational use, providing secure authentication, complete leave workflows, administration tools, and decision-support reporting.
+
+---
 
 ## Tech Stack
 
@@ -251,26 +277,6 @@ WILDFLY_HOME/standalone/deployments/
 
 ***
 
-## Backend – Implemented in Sprint 1
-
-- GET /api/auth/me (JAX-RS):
-    - Protected by roles: EMPLOYEE, MANAGER, HR
-    - Uses LDAP auth + MySQL users table (via employee_code)
-    - Returns JSON with:
-        - id
-        - employeeCode
-        - firstName
-        - lastName
-        - role
-        - departmentId
-- CORS filter:
-    - Allows calls from React dev server (http://localhost:5173)
-    - Handles preflight (OPTIONS)
-- DB seeding:
-    - Departments and three users (EMP001/2/3) that match LDAP entries
-
-***
-
 ## Frontend (React) Setup
 
 ### Prerequisites
@@ -293,50 +299,6 @@ The frontend expects backend API at:
 http://localhost:8080/leave-management-backend/api
 
 Update API_BASE in src/api/auth.ts if needed.
-
-### Frontend – Implemented in Sprint 1
-
-Login
-
-- LoginForm asks for:
-    - Username (LDAP uid, e.g. EMP001)
-    - Password
-- Calls GET /auth/me with HTTP Basic Auth header.
-- On success:
-    - Stores { user, authHeader } in sessionStorage (keys: lm_user, lm_auth).
-    - Shows success toast via react-hot-toast.
-- On error:
-    - Shows error toast (invalid credentials, forbidden, server error).
-
-Session (UI)
-
-- On app start:
-    - Reads lm_user and lm_auth from sessionStorage.
-    - If found and valid, treats the user as logged in.
-- Logout:
-    - Clears sessionStorage.
-    - Returns to login screen.
-
-Dashboard
-
-- App:
-    - If user exists → show Dashboard
-    - If no user → show Login
-- Dashboard:
-    - Shows header with logged-in user (name, employeeCode, role)
-    - Renders role-specific dashboard shell:
-        - EmployeeDashboard / ManagerDashboard / HRDashboard (basic placeholder content)
-    - Sidebar (AppSidebar):
-        - Uses user data (from sessionStorage) in NavUser (name + synthetic email)
-        - Static nav items (My Leave Requests, Team, Reports) – to be connected later
-
-Loading
-
-- Uses ldrs (e.g. <l-helix> spinner) inside buttons during network calls.
-
-Notifications
-
-- Uses react-hot-toast for login success/failure.
 
 ***
 
@@ -376,13 +338,29 @@ Notifications
 
 ***
 
-## Next Steps (Future Sprints)
+## Next Steps
 
-- Design and implement leave_requests entity and JPA mapping.
-- Add EJB services for leave workflow (create / approve / reject).
-- Expose:
-    - REST endpoints for employees, managers, HR.
-    - SOAP endpoints (JAX-WS) for external integration.
-- Integrate JMS for notifications.
-- Connect React dashboards to real leave data (history, balances, approvals).
+The original future work items (leave_requests entity, workflow services, dashboards, reporting, and integrations) have now been implemented across Sprints 1–5.
+
+Going forward, the focus is on stabilization, adoption, and incremental improvements:
+
+- Organizational rollout:
+  - Onboard HR, managers, and employees to the system.
+  - Configure LDAP groups, departments, and initial leave policies for the target organization.
+- Monitoring and maintenance:
+  - Track application logs and performance of key endpoints (auth, dashboards, reporting).
+  - Refine DB indexes and queries as real usage grows.
+  - Regularly review security (password policies, LDAP access, roles, and permissions).
+- Usability and UX refinements:
+  - Collect feedback from HR and managers on dashboards and reports.
+  - Improve filtering, search, and export options based on real-world usage.
+- Extensibility and integrations:
+  - Integrate with HRIS / payroll systems where available (via REST or SOAP).
+  - Add optional notifications (email, Slack, or Teams) for approvals and reminders.
+- Documentation and onboarding:
+  - Maintain up-to-date admin and user guides.
+  - Document standard operating procedures for HR (policy changes, year-end rollover, audits).
+
+With these steps, the project moves from “implementation” to “operational use and continuous improvement”, while keeping the door open for future integrations and enhancements.
+
 

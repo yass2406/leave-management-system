@@ -117,6 +117,11 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+  --chart-1: 220 75% 60%;
+  --chart-2: 160 70% 55%;
+  --chart-3: 35 90% 60%;
+  --chart-4: 280 75% 65%;
+  --chart-5: 340 80% 60%;
 }
 
 @layer base {
@@ -126,4 +131,25 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Hide scrollbar but allow scrolling */
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+/* Hide scrollbar for shadcn table container but keep scrolling */
+[data-slot="table-container"] {
+  -ms-overflow-style: none; /* IE / Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+[data-slot="table-container"]::-webkit-scrollbar {
+  width: 0;
+  height: 0;
 }
