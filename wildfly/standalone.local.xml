@@ -136,7 +136,7 @@
                     <security user-name="sa" password="sa"/>
                 </datasource>
                 <datasource jndi-name="java:jboss/datasources/MySQLDS" pool-name="MySQLDS">
-                    <connection-url>jdbc:mysql://192.168.1.19:3306/leave_management</connection-url>
+                    <connection-url>jdbc:mysql://mysql-leave-system:3306/leave_management</connection-url>
                     <driver-class>com.mysql.cj.jdbc.Driver</driver-class>
                     <driver>mysql</driver>
                     <security user-name="root" password="%%Admin%%"/>
@@ -396,10 +396,10 @@
                 </server-ssl-contexts>
             </tls>
             <dir-contexts>
-                <dir-context name="ldap-ctx" url="ldap://192.168.1.19:389" principal="cn=admin,dc=polytech,dc=local">
+                <dir-context name="ldap-ctx" url="ldap://openldap:389" principal="cn=admin,dc=polytech,dc=local">
                     <credential-reference clear-text="admin"/>
                 </dir-context>
-                <dir-context name="ldapConnection" url="ldap://192.168.1.19:389" principal="cn=admin,dc=polytech,dc=local">
+                <dir-context name="ldapConnection" url="ldap://openldap:389" principal="cn=admin,dc=polytech,dc=local">
                     <credential-reference clear-text="admin"/>
                 </dir-context>
             </dir-contexts>
