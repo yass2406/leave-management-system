@@ -1,0 +1,11 @@
+FROM maven:3.9-eclipse-temurin-21 AS build
+
+WORKDIR /app
+
+# Copy only this module (leave-management-backend)
+COPY pom.xml .
+COPY src ./src
+
+RUN mvn -B clean package
+
+# The built war will be at /app/target/leave-management-backend.war
