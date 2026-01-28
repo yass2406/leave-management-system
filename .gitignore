@@ -19,7 +19,7 @@ Thumbs.db
 
 # WildFly / JBoss
 standalone/
-domain/
+./domain/
 deployments/
 
 # Maven local repo
