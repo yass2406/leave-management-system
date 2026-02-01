@@ -23,7 +23,7 @@ public class LeaveRequestDTO {
     public LeaveRequestDTO(String id, String requestNumber, LeaveType leaveType,
             LocalDate startDate, LocalDate endDate, LeaveRequest.Status status,
             BigDecimal totalDays, String reason) {
-    	this.id = id;
+        this.id = id;
 		this.requestNumber = requestNumber;
 		this.leaveTypeId = leaveType.getId();
 		this.leaveTypeName = leaveType.getName();

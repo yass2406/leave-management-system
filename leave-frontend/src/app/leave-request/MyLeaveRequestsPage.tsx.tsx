@@ -82,10 +82,10 @@ export default function MyLeaveRequestsPage() {
         <div className="space-y-4">
             <div className="flex items-center justify-between">
                 <h2 className="text-xl font-semibold">
-                    My leave requests
+                    My Leave Requests
                 </h2>
                 <Button onClick={() => setShowCreateForm(true)}>
-                    New leave request
+                    New Leave Request
                 </Button>
             </div>
             {/* Filters */}
