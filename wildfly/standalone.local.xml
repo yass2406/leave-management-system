@@ -100,6 +100,9 @@
             <logger category="sun.rmi">
                 <level name="WARN"/>
             </logger>
+	    <logger category="com.polytech.app.service">
+                <level name="DEBUG"/>
+            </logger>
             <root-logger>
                 <level name="INFO"/>
                 <handlers>

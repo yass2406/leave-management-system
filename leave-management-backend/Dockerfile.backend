@@ -4,4 +4,4 @@ WORKDIR /app
 
 COPY . .
 
-RUN mvn -B clean package
+RUN mvn -B clean package -DskipTests

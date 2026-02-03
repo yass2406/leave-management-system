@@ -12,6 +12,7 @@ import jakarta.transaction.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import javax.naming.NamingException;
@@ -35,6 +36,8 @@ public class UserAdminService {
 	public List<UserAdminDTO> getAllUsersForAdmin() {
 		return userRepository.findAllWithDepartment().stream().map(this::toDto).collect(Collectors.toList());
 	}
+	
+	private static final Logger LOG = Logger.getLogger(UserAdminService.class.getName());
 
 	public UserAdminDTO createUser(UserAdminRequest req) {
 		Department dept = departmentRepository.findById(req.departmentId)
@@ -45,6 +48,7 @@ public class UserAdminService {
 		boolean ldapCreated = false;
 
 		try {
+			LOG.info("Creating LDAP user " + employeeCode + " (" + req.role + ")");
 			ldapProvisioningService.createLdapUser(employeeCode, req.firstName, req.lastName, initialPassword,
 					req.role.name());
 
@@ -68,6 +72,7 @@ public class UserAdminService {
 
 			return toDto(u);
 		} catch (NamingException e) {
+			LOG.severe("LDAP create failed for " + employeeCode + ": " + e.getMessage());
 			if (ldapCreated) {
 				try {
 					ldapProvisioningService.deleteLdapUser(employeeCode);
