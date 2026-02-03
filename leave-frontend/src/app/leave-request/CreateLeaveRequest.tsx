@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { useEffect, useState } from "react"
 import type { LeaveRequest, LeaveType, User } from "@/types/types"
 import toast from "react-hot-toast"
+import { API_BASE } from "@/types/consts"
 
 type CreateLeaveRequestProps = {
   onCreated?: (request: LeaveRequest) => void
@@ -25,7 +26,7 @@ const formatLocalDate = (d: Date) => {
 export default function CreateLeaveRequest({
   onCreated,
   onCancel,
-  apiBase = "http://localhost:8080/leave-management-backend/api"
+  apiBase = API_BASE
 }: CreateLeaveRequestProps) {
   const [dateRange, setDateRange] = React.useState<DateRange | undefined>({
     from: new Date(2025, 5, 12),
