@@ -10,11 +10,12 @@ import java.util.Hashtable;
 
 @ApplicationScoped
 public class LdapProvisioningService {
-
+	String url = System.getProperty("ldap.url",
+			System.getenv().getOrDefault("LDAP_URL", "ldap://polytech.ddns.net:389"));
 	private DirContext newContext() throws NamingException {
 		Hashtable<String, String> env = new Hashtable<>();
 		env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-		env.put(Context.PROVIDER_URL, "ldap://polytech.ddns.net:389");
+		env.put(Context.PROVIDER_URL, url);
 		env.put(Context.SECURITY_AUTHENTICATION, "simple");
 		env.put(Context.SECURITY_PRINCIPAL, "cn=admin,dc=polytech,dc=local");
 		env.put(Context.SECURITY_CREDENTIALS, "admin");
@@ -94,7 +95,7 @@ public class LdapProvisioningService {
 
 		Hashtable<String, String> env = new Hashtable<>();
 		env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-		env.put(Context.PROVIDER_URL, "ldap://polytech.ddns.net:389");
+		env.put(Context.PROVIDER_URL, url);
 		env.put(Context.SECURITY_AUTHENTICATION, "simple");
 		env.put(Context.SECURITY_PRINCIPAL, userDn);
 		env.put(Context.SECURITY_CREDENTIALS, oldPassword);
